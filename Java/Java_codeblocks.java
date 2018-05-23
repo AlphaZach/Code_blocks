@@ -52,3 +52,43 @@ public class IntList {
 /*----------------------------------------------------------------------------*/
 
 /*SLList*/
+//firstly, rename the InList class to IntNode, make it not public, since only one public class in one java file
+class IntNode {
+    public int item;
+    public IntNode next;
+
+    public IntNode(int i, IntNode n) {
+        item = i;
+        next = n;
+    }
+}
+
+//then create a new class called SLList
+public class SLList {
+    public IntNode first;
+
+    public SLList(int x) {
+    first = new IntNode(x, null);
+    }
+//now if we wanna make a list with one element,
+//just L = new SLList(value),
+//instead of L = new IntList(value, null), become more friendly
+
+    /*add x to the front of the list.*/
+    public void addFirst(int x) {
+      first = new IntNode(x, first);
+    }
+
+    /*return the first of the list*/
+    public int getFirst() {
+      return first.item;
+    }
+}
+//Essentially, the SLList class acts as a middleman between the list user and the naked recursive data 
+
+
+
+
+
+/*---------------------------------------------------------------------------------------------*/
+
