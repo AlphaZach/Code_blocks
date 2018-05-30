@@ -113,3 +113,96 @@ XHR.onreadystatechange = function() {
 XHR.open("GET", "https://api.github.com/zen");
 XHR.send();
 /*------------------------------------------------------*/
+
+/*fetch()*/
+//fetch() method returns a promise that resolves to the Response object 
+//representing the response to your request.
+fetch(url)
+.then(function(response){
+  console.log(response);
+  return response.json() //return a Promise object that resolve the json data
+})
+.then(function(data){
+  console.log(data);
+});
+/*-------------------------------------------------------------*/
+
+/*fetch options*/
+//JSON.stringify() can convert a Javascript value to a JSON string
+fetch(url, {
+  method: 'POST',
+  body: JSON.stringify({
+        name: 'blue',
+        login: 'bluecat',
+    })
+})
+.then(function(response){
+  console.log(response);
+  return response.json()
+})
+.then(function(data){
+  console.log(data.bpi.EUR.rate);
+});
+/*----------------------------------------------------*/
+
+/*fetch handling Errors*/
+  var url = 'https://api.github.com/users/alphazach';
+  fetch(url)
+  .then(handleErrors)
+  .then(function(request){
+    console.log("EVERYTHING IS FINE!");
+    console.log(request);
+  })
+  // .catch() only run if there is a problem with internet or the request itself, eventhough the status is 404
+  .catch(function(error){
+    console.log(error);
+  });
+
+  // A Error handling function to check if the request get a proper response.
+  function handleErrors (request){
+  if(!request.ok) {
+    throw Error(request.status);
+  }
+  return request;
+}
+/*------------------------------------------------------*/
+
+
+/*jQuery $.ajax $.get $.post $.getJSON*/
+$.ajax({
+  method: "GET",
+  url: "some.api.com",
+})
+.done(function(res){
+  //res is a JSON object by default
+  //do something
+})
+.fail(function(){
+  //do something
+})
+
+$.get('https://api.github.com/users/colt')
+.done(function(data){
+console.log(data);
+})
+.fail(function(){
+console.log("ERROR!");
+})
+
+var data = {name: "Charlie", city: "Florence"};
+$.post("www.catsarecoolandsoaredogs.com", data)
+.done(function(data){
+ console.log("HI!");
+})
+.fail(function(){
+ console.log("ERROR!");
+})
+
+$.getJSON("https://api.github.com/users/colt")
+.done(function(data){
+  console.log(data);
+})
+.fail(function(){
+  console.log("PROBLEM!");
+})
+/*----------------------------------------------------------*/

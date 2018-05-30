@@ -152,6 +152,82 @@ public class SLList {
       System.out.println(L.size());
     }
 }
+
+//the addLast() method above is slow, we can speed it up by add a last variable
+public class SLList {
+    private IntNode sentinel;
+    private IntNode last;
+    private int size;    
+
+    public void addLast(int x) {
+        last.next = new IntNode(x, null);
+        last = last.next;
+        size += 1;
+    }
+}
+
 //Essentially, the SLList class acts as a middleman between the list user and the naked recursive data 
 /*---------------------------------------------------------------------------------------------*/
 
+/*DLList*/
+/* generics,which will allow you to create data structures that hold any reference type */
+public class DLList<BleepBlorp> {
+    private IntNode sentinel;
+    private int size;
+
+    public class IntNode {
+        public IntNode prev;
+        public BleepBlorp item;
+        public IntNode next;
+    }
+}
+//If you need to instantiate a generic over a primitive type, use Integer, Double, Character, Boolean, Long, Short, Byte, or Float instead of their primitive equivalents.
+
+/*Array*/
+//3 notations to create an array
+x = new int[3];
+y = new int[]{1, 2, 3, 4, 5};
+int[] z = {9, 10, 11, 12, 13};
+//examples
+int[] z = null;
+int[] x, y;
+
+x = new int[]{1, 2, 3, 4, 5};
+y = x;
+x = new int[]{-1, 2, 5, 4, 99};
+y = new int[3];
+z = new int[0];
+int xL = x.length;
+
+String[] s = new String[6];
+s[4] = "ketchup";
+s[x[3] - x[1]] = "muffins";
+
+int[] b = {9, 10, 11};
+System.arraycopy(b, 0, x, 3, 2); //equivalent of x[3:5] = b[0:2] in Python.
+//The final line demonstrates one way to copy information from one array to another. 
+//System.arraycopy takes five parameters:
+//1.The array to use as a source
+//2.Where to start in the source array
+//3.The array to use as a destination
+//4.Where to start in the destination array
+//5.How many items to copy
+
+/*2D Array*/
+//examples
+int[][] pascalsTriangle;
+pascalsTriangle = new int[4][];
+int[] rowZero = pascalsTriangle[0];
+
+pascalsTriangle[0] = new int[]{1};
+pascalsTriangle[1] = new int[]{1, 1};
+pascalsTriangle[2] = new int[]{1, 2, 1};
+pascalsTriangle[3] = new int[]{1, 3, 3, 1};
+int[] rowTwo = pascalsTriangle[2];
+rowTwo[1] = -5;
+
+int[][] matrix;
+matrix = new int[4][];
+matrix = new int[4][4];
+
+int[][] pascalAgain = new int[][]{{1}, {1, 1}, {1, 2, 1}, {1, 3, 3, 1}};
