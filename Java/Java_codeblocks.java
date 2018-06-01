@@ -231,3 +231,82 @@ matrix = new int[4][];
 matrix = new int[4][4];
 
 int[][] pascalAgain = new int[][]{{1}, {1, 1}, {1, 2, 1}, {1, 3, 3, 1}};
+/*--------------------------------------------------------------------------*/
+
+
+/*Array List*/
+public class AList {
+    private int[] items;
+    private int size;
+
+    /** Creates an empty list. */
+    public AList() {
+        items = new int[100];
+        size = 0;
+    }
+
+    /*Resize the underlying array to the target capacity*/
+    private void resize(int capacity){
+      int[] a = new int[capacity];
+      System.arraycopy(items, 0, a, 0, size);
+      items = a;
+    }
+    /** Inserts X into the back of the list. */
+    public void addLast(int x) {
+        //resizing if get over the size
+        if (size == item.length){
+          //using addition while resize will be very slow
+          //instead we can resize using multiplication
+          resize(size*factor);
+        }
+        items[size] = x;
+        size = size + 1;
+    }
+
+    /** Returns the item from the back of the list. */
+    public int getLast() {
+        return items[size - 1];
+    }
+    /** Gets the ith item in the list (0 is the front). */
+    public int get(int i) {
+        return items[i];
+    }
+
+    /** Returns the number of items in the list. */
+    public int size() {
+        return size;
+    }
+
+    /** Deletes item from back of the list and
+      * returns deleted item. */
+    public int removeLast() {
+        int x = getLast();
+        size = size - 1;
+        return x;
+    }
+}
+
+//generic Alist
+public class AList<Glorp>{
+  private Glorp[] items;
+  private int size;
+
+  public AList() {
+    items = (Glorp[]) new Object[8];
+    size = 0;
+  }
+  //we cannot do something like:
+  //Glorp[] items = new Glorp[8];
+  //instead, we have to use the awkwasrd syntax shown above
+  private void resize(int cap){
+    Glorp[] a = (Glorp[]) new Object[cap];
+    System.arraycopy(item, 0, a, 0, size);
+    items = a;
+  }
+
+  public Glorp get(int i){
+    return items[i];
+  }
+  ...
+}
+/*--------------------------------------------------------------------*/

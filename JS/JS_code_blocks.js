@@ -1,7 +1,8 @@
 /*forEach*/
+//forEach() always return 'undefined'
 var strings = ["my", "forEach", "example"];
 var result = " ";
-//s -> str, i -> index, a -> array
+//s -> str(each in the array), i -> index, a -> array
 strings.forEach(function(s, i, a) {
     if (a.length - 1 !== i) {
        result += s + " ";
@@ -10,7 +11,7 @@ strings.forEach(function(s, i, a) {
     }
 });
 // >console.log(result)
-// my forEach example!!!
+// >my forEach example!!!
 /*-------------------------------------------------*/
 
 /*setTimeout*/
@@ -243,3 +244,191 @@ function handleErrors(err) {
       console.log('Error', err.message);
     }
   }
+/*--------------------------------------------------------------------*/
+
+
+/*Testing with Jasmine*/
+
+//Matchers
+   describe("Jasmine Matchers", function() {
+    //toBe compares with === and toEqual compares with different pobjects as well
+    it("allows for === and deep equality", function() {
+      expect(1+1).toBe(2);
+      expect([1,2,3]).toEqual([1,2,3]);
+    });
+    it("allows for easy precision checking", function() {
+      expect(3.1415).toBeCloseTo(3.14,2);
+    });
+    it("allows for easy truthy / falsey checking", function() {
+      expect(0).toBeFalsy();
+      expect([]).toBeTruthy();
+    });
+    it("allows for easy type checking", function() {
+      expect([]).toEqual(jasmine.any(Array));
+      expect(function(){}).toEqual(jasmine.any(Function));
+    });
+    it("allows for checking contents of an object", function() {
+      expect([1,2,3]).toContain(1);
+      expect({name:'Elie', job:'Instructor'}).toEqual(jasmine.objectContaining({name:'Elie'}));
+    });
+  });
+
+//BeforeEach: run before each 'it' callback
+describe("Arrays", function(){
+  var arr;
+  beforeEach(function(){
+    arr = [1,3,5];
+  });
+  it("adds elements to an array", function(){
+    arr.push(7);
+    expect(arr).toEqual([1,3,5,7]);
+  });
+
+  it("returns the new length of the array", function(){
+    expect(arr.push(7)).toBe(4);
+  });
+
+  it("adds anything into the array", function(){
+    expect(arr.push({})).toBe(4);
+  });
+});
+
+//afterEach:run after each "it" callback - useful for teardown(let data stay the same before tests)
+describe("counting", function(){
+  var count = 0;
+
+  beforeEach(function(){
+    count++;
+  });
+
+  afterEach(function(){
+    count == 0;
+  });
+
+  it("has a counter that increments", function(){
+    expect(count).toBe(1);
+  });
+
+  it("gets reset", function(){
+    expect(count).toBe(1);
+  });
+});
+
+// beforeAll/afterAll : run before/after all tests! Does not reset in between
+var arr[];
+beforeAll(function(){
+  arr = [1,3,5];
+})
+describe("counting", function(){
+  it("starts with an array", function() {
+    expect(arr.push(7)).toBe(4);
+  });
+  it("keeps mutating that array", function(){
+    console.log(arr); // [1,3,5,7]
+    expect(arr.push(9)).toBe(5);
+  });
+});
+
+describe("Again", function(){
+  it("Keeps mutating the array..again", function(){
+    console.log(arr); //[1,3,5,7,9]
+  });
+});
+
+//Spies
+//A spy can stub any function and tracks calls to it and all arguments. 
+//A spy only exists in the describe or it block in which it is defined, and will be removed after each spec. 
+function add(a,b,c){
+  return a+b+c;
+}
+//remenber the variables in the global scope are attached to the 'window' object
+//creating a spy
+describe("add", function(){
+  var addSpy, result;
+  beforeEach(function(){
+    addSpy = spyOn(window, 'add').and.callThrough();
+    result = addSpy(1,2,3);
+  })
+  it("is can have params tested", function(){
+    expect(addSpy).toHaveBeenCalled();
+    expect(addSpy).toHaveBeenCalledWith(1,2,3);
+  });
+  //with .and.callThrough,it will delegate to the actual implementation,then can catch the return value 
+  it("can have a return value tested", function(){
+    expect(result).toEqual(6);
+  });
+  it("the number of times of function calls", function(){
+    expect(addSpy.calls.any()).toBe(true);
+    expect(addSpy.calls.count()).toBe(1);
+    expect(result).toEqual(6);
+  });
+});
+
+//clock
+//It makes the timer callbacks synchronous, 
+//executing the registered functions only once the clock is ticked forward in time.
+
+//setTimeout
+describe("a simple setTimeout", function(){
+  var sample;
+  beforeEach(function(){
+    sample = jasmine.createSpy("sampleFunction");
+    jasmine.clock().install();
+  });
+
+  afterEach(function(){
+    jasmine.clock().uninstall();
+  });
+
+  it("is only invoked after 1000 milliseconds", function(){
+    setTimeout(function(){
+      sample();
+    }, 1000);
+    jasmine.clock().tick(999);
+    expect(sample).not.toHaveBeenCalled();
+    jasmine.clock().tick(1);
+    expect(sample).toHaveBeenCalled();
+  });
+});
+
+//setInterval
+describe("a simple setInterval", function(){
+  var dummyFunction;
+
+  beforeEach(function(){
+    dummyFunction = jasmine.createSpy("dummyFunction");
+    jasmine.clock().install();
+  });
+  afterEach(function(){
+    jasmine.clock().uninstall();
+  });
+
+  it("checks to see the number of times the function is invoked", function(){
+    setInterval(function(){
+      dummyFunction();
+    }, 1000);
+    jasmine.clock().tick(999);
+    expect(dummyFunction.calls.count()).toBe(0);
+    jasmine.clock().tick(1000);
+    expect(dummyFunction.calls.count()).toBe(1);
+    jasmine.clock().tick(1);
+    expect(dummyFunction.calls.count()).toBe(2);
+  });
+});
+
+//testing async code
+//Calls to beforeEach, it, and afterEach can take an optional single argument that should be called when the async work is complete.
+//By default jasmine will wait for 5 seconds for an asynchronous spec to finish before causing a timeout failure.
+function getUserInfo(username){
+  return $.getJSON('https://api.github.com/users/' + username);
+}
+
+describe("#getUserInfo", function(){
+  if("return the correct name for the user", function(done){
+    getUserInfo('Elie').then(function(data){
+      expect(data.name).toBe('Elie Schoppik');
+    });
+  });
+});
+/*----------------------------------------------------*/
+
