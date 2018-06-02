@@ -310,3 +310,93 @@ public class AList<Glorp>{
   ...
 }
 /*--------------------------------------------------------------------*/
+
+/*testing*/
+public static void testSort() {
+    String[] input = {"i", "have", "an", "egg"};
+    String[] expected = {"an", "egg", "have", "i"};
+    Sort.sort(input);
+    //we can't use == to compare the input and expect
+    // input == expected would test whether or not the addresses of input and expected are the same
+    for (int i = 0; i < input.length; i += 1) {
+        if (!input[i].equals(expected[i])) {
+            System.out.println("Mismatch in position " + i + ", expected: " + expected + ", but got: " + input[i] + ".");
+            break;
+        }
+    }
+}
+
+public static void main(String[] args) {
+    testSort();
+}
+
+/*org.junit library*/
+    for (int i = 0; i < input.length; i += 1) {
+        if (!input[i].equals(expected[i])) {
+            System.out.println("Mismatch in position " + i + ", expected: " + expected + ", but got: " + input[i] + ".");
+            break;
+        }
+    }
+  //the comparision above can be replaced by
+  org.junit.Assert.assertArrayEquals(expected, input);
+
+/*Selection sort test*/
+public class Sort{
+
+  public static int findSmallest(String[] x) {
+      int smallestIndex = 0;
+      for (int i = 0; i < x.length; i += 1) {
+          int cmp = x[i].compareTo(x[smallestIndex]);
+          if (cmp < 0) {
+              smallestIndex = i;
+          }
+      }
+      return smallestIndex;
+  }
+      
+  public static void swap(String[] x, int a, int b) {
+      String temp = x[a];
+      x[a] = x[b];
+      x[b] = temp;
+  }
+
+  //Sorts strings destructively
+  public static void sort(String[] x) { 
+     // find the smallest item
+     // move it to the front
+     // selection sort the rest (using recursion?)
+     int smallestIndex = findSmallest(x);
+     swap(x, 0, smallestIndex);
+  }  
+}
+
+public class TestSort{
+  //testFindsmallest
+  public static void testFindSmallest() {
+      String[] input = {"i", "have", "an", "egg"};
+      int expected = 2;
+
+      int actual = Sort.findSmallest(input);
+      org.junit.Assert.assertEquals(expected, actual);        
+
+      String[] input2 = {"there", "are", "many", "pigs"};
+      int expected2 = 1;
+
+      int actual2 = Sort.findSmallest(input);
+      org.junit.Assert.assertEquals(expected2, actual2);
+  }
+  //Test the Sort.swap method
+  public static void testSwap() {
+      String[] input = {"i", "have", "an", "egg"};
+      int a = 0;
+      int b = 2;
+      String[] expected = {"an", "have", "i", "egg"};
+
+      Sort.swap(input, a, b);
+      org.junit.Assert.assertArrayEquals(expected, input);
+  }
+
+
+
+}
+

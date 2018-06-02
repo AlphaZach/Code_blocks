@@ -432,3 +432,148 @@ describe("#getUserInfo", function(){
 });
 /*----------------------------------------------------*/
 
+/*Advanced Array*/
+
+/*map*/
+// Creats a new array
+// Iterates through an array
+// Runs a callback function for each value in the array
+// Adds the result of that callback function to the new array
+// returns the new array
+
+//Examples
+function tripleValues(arr){
+  return arr.map(function(value){
+    return value * 3;
+  });
+}
+
+tripleValues([1,2,3]); // [3,6,9]
+
+function valTimesIndex(arr){
+  return arr.map(function(val,idx){
+      return val*idx;
+  })
+}
+
+/*Filter*/
+// Creates a new array
+// iterates through an array
+// Runs a callback function on each value in the array
+// if the callback function return true, that value will be
+//     added to the new array
+// If the callback function returns false, that value will
+//     be ignored from the new array
+
+// examples 
+var arr = [1,2,3];
+arr.filter(function(value, index, array){
+  return value > 2;
+});
+// [3]
+
+var instructors = [{name: "Elie"},
+                   {name: "Tim"},
+                   {name: "Matt"},
+                   {name: "Colt"}];
+instructors.filter(function(val, idx, arr){
+  return value.name.length > 3;
+});
+// [{name: "Elie"},{name: "Matt"},{name: "Colt"}];
+
+/*some*/
+// Iterates through an array
+// Runs a callback on each value in the array
+// if the callback returns true for at least one single vale, return true
+// otherwise, return false
+// the return value of some is boolean
+
+var arr = [1,2,3];
+arr.some(function(value, index, array){
+  return value < 2;
+});
+// true
+
+function hasEvenNumber(arr){
+  return arr.some(function(value){
+    return value % 2 === 0;
+  });
+}
+hasEvenNumber([1,2,3,4]); //true
+hasEvenNumber([1,3,5]); // false
+
+/*every*/
+// Iterates through an array
+// Runs a callback on each value in the array
+// If the callback returns false for any single value, return false
+
+var arr = [-1,-2,-3];
+arr.every(function(value, index, array){
+  return value < 0;
+});
+//true
+
+var arr = [1,2,3];
+arr.every(function(value, index, array){
+  return value > 2;
+});
+// false
+
+function allArrays(arr){
+  return arr.every(Array.isArray);
+}
+
+allArrays([[1],[2],[3,4]]); // true
+allArrays([[1],[2],{}]); // false
+
+/*reduce*/
+// Accepts a callback function and an optional second parameter
+// Iterates through an array
+// Runs a callback on each value in the array
+// The first parameter to the callback is either the first value in 
+//     the array or the optional second parameter
+// The first parameter to the callback is ofthen called "accumulator"
+// The returned value from the callback becomes the new value of accumulator
+
+// anatomy of reduce
+[array].reduce(function(accumulator, nextValue, index, array){
+  //Whatever is reduced inside here, will be the value of the 
+  //accumulator in the next iteration.
+}, optional second parameter)
+
+//example
+var arr = [1,2,3,4,5];
+arr.reduce(function(accumulator, nextValue){
+  return accumulator + nextValue;
+});
+// the value of the accumulator starts as the first value in the array
+// return 15 since 1 + 2 + 3 + 4 + 5 = 15
+
+// ex with optional second parameter
+// now the value of the accumulator starts as 10
+arr.reduce(function(accumulator, nextValue){
+  return accumulator + nextValue;
+}, 10);
+// return 25; since 10 + 1 + 2 + 3 + 4 + 5 = 25
+
+var names = ['Time', 'Matt', 'Colt', 'Elie'];
+names.reduce(function(accumulator, nextValue){
+  return accumulator += ' ' + nextValue;
+}, 'The instructors are');
+// 'The instructors are Tim Matt Colt Elie'
+
+var arr = [5,4,1,4,5];
+arr.reduce(function(accumulator, nextValue){
+  if(nextValue in accumulator){
+    accumulator[nextValue]++;
+  } else {
+    accumulator[nextValue] = 1;
+  }
+  return accumulator;
+},{});
+// {5:2, 4:2, 1:1}
+
+/*----------------------------------------------------------------------------*/
+
+
+
