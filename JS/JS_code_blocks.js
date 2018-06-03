@@ -11,7 +11,7 @@ strings.forEach(function(s, i, a) {
     }
 });
 // >console.log(result)
-// >my forEach example!!!
+// < my forEach example!!!
 /*-------------------------------------------------*/
 
 /*setTimeout*/
@@ -24,7 +24,7 @@ setTimeout(function() {
 	clearTimeout(Id);
 }, 2000);
 // < 68594         //The id for setTimeout
-// > cancel 68593
+// < cancel 68593
 /*-------------------------------------------------------*/
 
 /*setInterval*/
@@ -35,9 +35,9 @@ if (num === 3) {
 clearInterval(intervalId);
 }
 }, 1000);
-//> num: 1
-//> num: 2
-//> num: 3
+//< num: 1
+//< num: 2
+//< num: 3
 /*-----------------------------------------------------*/
 
 /*Queue and Stack*/
@@ -48,8 +48,8 @@ for(var i = 0; i < 1000000000; i++) {
 	var x = i^2;
 }
 console.log("done with loop");
-//> done with the loop
-//> Hello from the timeout
+//< done with the loop
+//< Hello from the timeout
 // the function in setTimeout is in a queue, and can't be invoked until the stack is empty
 /*---------------------------------------------------------*/
 
@@ -575,5 +575,246 @@ arr.reduce(function(accumulator, nextValue){
 
 /*----------------------------------------------------------------------------*/
 
+/* Closures */
+// A closure is a function that makes use of variables 
+// defined in outer functions that have previously returned
 
+// By the concept of Closure, we can't externally access the variable in a function
+// the inner function could takes (like copying) the variable of outter function, 
+// but won't modify the original variable
+// example
+function counter(){
+  var count = 0;
+  return function inner(){
+    count++;
+    return count;
+  }
+}
+
+// > var counter1 = counter()
+// < undefined
+// > counter1()
+// < 1
+// > counter1()
+// < 2
+// > var counter2 = counter()
+// < undefined
+// > counter2()
+// < 1
+// > count
+// < Error, Uncaght ReferenceError: count
+
+// see above, we can't access the variable in counter()
+// and counter2 won't modify the 'count' of counter1
+
+
+// another example, shows how to prevent the varible of 
+// a instance function can'r be modify
+function classRoom(){
+  var instructors = ['Elie', "Colt"];
+  return {
+    getInstructors: function() {
+      // .slice() here return the copy of the array, so users can't change the array
+      return instructors.slice();
+    },
+    addInstructor: function(Instructor) {
+      instructors.push(Instructor);
+      return instructors.slice();
+    }
+  }
+}
+
+// > var course1 = classRoom();
+// > course1.getInstructors().pop(); // < "Colt"
+// > course1.getInstructors().pop(); // < "Colt"
+// > course1.getInstructors(); // ["Colt", "Elie"]
+
+// now the instructors variable is truly private
+/*---------------------------------------------------------------*/
+
+
+/*this*/
+
+// A reserved keyword in JS
+// Usually determined by how a function is called ('excution context')
+// Can be determined using four rules (global, object/implicit, explicit, new)
+
+// 1 - Global Context； global rule
+    console.log(this); // < window
+
+    function whatIsThis() {
+      return this;
+    }
+    whatIsThis(); // < window 
+    // the global rule applies, unless the keyword 'this' is\
+    // inside of a declared object it's inside of a function right now
+
+    function variablesInThis(){
+      this.person = "Elie"
+    }
+    variablesInThis() // the keyword 'this' inside the function is the window
+    console.log(person); // Elie
+
+    // Strict Mode
+    "use strict"
+
+    console.log(this); // window
+
+    function whatIsThis() {
+      return this;
+    }
+
+    whatIsThis(); // undefined
+    // since in strict mode, 'this' when inside of a function is undefined.
+     function variablesInThis(){
+      this.person = "Elie";
+     }
+     variablesInThis(); // TypeError, can't set person on undefined!
+
+// 2 - Implicit/Object
+
+    // When the keyword 'this' is inside of a declared object
+    var person = {
+      firstName: "Elie",
+      sayHi: function() {
+        return "Hi " + this.firstName;
+      },
+      determineContext: function(){
+        return this === person;
+      }
+    }
+    // person.sayHi(); // "Hi Elie"
+    // person.determineContext(); // true
+
+    // However, 'this' is defined when a function is run!
+    // If there is not a function being run here to create
+    // a new value of the keyword 'this' so the value of 'this' is still the window
+    var person = {
+      firstName: "Elie",
+      determineContext: this;
+    }
+    // person.determineContext; // window
+
+    // Nested Objects
+    var person = {
+      firstName: "Colt",
+      sayHi: function(){
+        return "Hi " + this.firstName;
+      },
+      determineContext: function(){
+        return this === person;
+      },
+      dog: {
+        sayHello: function(){
+          return "Hello " + this.firstName;
+        },
+        determineContext: function(){
+          return this === person;
+        }
+      }
+    }
+    // > person.sayHi(); // < "Hi Colt"
+    // > person.determineContext(); // < true
+    // > person.dog.sayHello(); // < "Hello undefined"
+    // > person.dog.determineContext(); // < false
+
+// 3 - Explicit Binding
+// Choose what we want the context of 'this' to be using call, apply or bind
+
+// Call
+
+    // use the nested object--person above
+    // > person.dog.sayHello.call(person); // < "Hello Colt"
+    // > person.dog.determineContext.call(person); // < true
+    // Using call worked!
+    // Notice that we do Not invoke sayHello or determineContext
+
+    function sayHi(){
+      return "Hi " + this.firstName;
+    }
+
+    var colt = {
+      firstName: "Colt"
+    }
+
+    var elie = {
+      firstName: "Elie"
+    }
+
+    sayHi.call(colt); // < Hi Colt
+    sayHi.call(elie); // < Hi Elie
+
+    // call method call be sued to turn array-like object into array, Google what is array-like object
+    function list() {
+      return Array.prototype.slice.call(arguments);
+    }
+
+    var list1 = list(1, 2, 3); // [1, 2, 3]
+    // get all the divs with text 'Hello'
+    var divs = document.getElementsByTagName('div');
+    var divsArray = [].slice.call(divs);
+    divsArray.filter(function(val){
+      return val.innerText === 'Hello';
+    });
+
+// Apply
+    function addNumbers(a,b,c,d){
+      return this.firstName + " just calculated " + (a+b+c+d);
+    }
+
+    var colt = {
+      firstName: "Colt"
+    }
+
+    var elie = {
+      firstName: "Elie"
+    }
+
+    addNumbers.call(elie,1,2,3,4) // Elie just calculated 10
+    addNumbers.apply(elie, [1,2,3,4]) // Elie just calculated 10
+
+    // when a function does not accept an array, apply will spread out values in an array for us
+    var nums = [5,7,1,4,2];
+    Math.max(nums); // NaN
+    Math.max.apply(this, nums); // 7
+
+// Bind
+// The parameters work like call, but bind returns a function with the context of 'this' bound already!
+
+function addNumbers(a,b,c,d){
+  return this.firstName + " just calculated " + (a+b+c+d);
+}
+
+var elie = {
+  firstName: "Elie"
+}
+
+var elieCalc = addNumbers.bind(elie, 1,2,3,4); // function(){} ...
+elieCalc(); // Elie just calculated 10
+//  With bind - we do not need to know all the arguments up front!
+var elieCalc = addNumbers.bind(elie, 1, 2); // function(){} ...
+elieCalc(3,4); // Elie just calculated 10
+
+// notice setTimeout is a method on the window object
+// Very commonly we lose the context of 'this', but in functions that we do not want to excute right away
+var colt = {
+  firstName: "Colt",
+  sayHi: function() {
+    setTimeout(function(){
+      console.log("Hi " + this.firstName);
+    }, 1000);
+  }
+}
+// > colt.sayHi(); // < Hi undefined
+
+// use bind to set the correct context of 'this'
+var colt = {
+  firstName: "Colt",
+  sayHi: function() {
+    setTimeout(function(){
+      console.log("Hi " + this.firstName);
+    }.bind(this), 1000);
+  }
+}
+// > colt.sayHi(); // < Hi Colt
 
