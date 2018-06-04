@@ -721,100 +721,155 @@ function classRoom(){
 // 3 - Explicit Binding
 // Choose what we want the context of 'this' to be using call, apply or bind
 
-// Call
+    // Call
 
-    // use the nested object--person above
-    // > person.dog.sayHello.call(person); // < "Hello Colt"
-    // > person.dog.determineContext.call(person); // < true
-    // Using call worked!
-    // Notice that we do Not invoke sayHello or determineContext
+        // use the nested object--person above
+        // > person.dog.sayHello.call(person); // < "Hello Colt"
+        // > person.dog.determineContext.call(person); // < true
+        // Using call worked!
+        // Notice that we do Not invoke sayHello or determineContext
 
-    function sayHi(){
-      return "Hi " + this.firstName;
-    }
+        function sayHi(){
+          return "Hi " + this.firstName;
+        }
 
-    var colt = {
-      firstName: "Colt"
-    }
+        var colt = {
+          firstName: "Colt"
+        }
 
-    var elie = {
-      firstName: "Elie"
-    }
+        var elie = {
+          firstName: "Elie"
+        }
 
-    sayHi.call(colt); // < Hi Colt
-    sayHi.call(elie); // < Hi Elie
+        sayHi.call(colt); // < Hi Colt
+        sayHi.call(elie); // < Hi Elie
 
-    // call method call be sued to turn array-like object into array, Google what is array-like object
-    function list() {
-      return Array.prototype.slice.call(arguments);
-    }
+        // call method call be sued to turn array-like object into array, Google what is array-like object
+        function list() {
+          return Array.prototype.slice.call(arguments);
+        }
 
-    var list1 = list(1, 2, 3); // [1, 2, 3]
-    // get all the divs with text 'Hello'
-    var divs = document.getElementsByTagName('div');
-    var divsArray = [].slice.call(divs);
-    divsArray.filter(function(val){
-      return val.innerText === 'Hello';
-    });
+        var list1 = list(1, 2, 3); // [1, 2, 3]
+        // get all the divs with text 'Hello'
+        var divs = document.getElementsByTagName('div');
+        var divsArray = [].slice.call(divs);
+        divsArray.filter(function(val){
+          return val.innerText === 'Hello';
+        });
 
-// Apply
-    function addNumbers(a,b,c,d){
-      return this.firstName + " just calculated " + (a+b+c+d);
-    }
+    // Apply
+        function addNumbers(a,b,c,d){
+          return this.firstName + " just calculated " + (a+b+c+d);
+        }
 
-    var colt = {
-      firstName: "Colt"
-    }
+        var colt = {
+          firstName: "Colt"
+        }
 
-    var elie = {
-      firstName: "Elie"
-    }
+        var elie = {
+          firstName: "Elie"
+        }
 
-    addNumbers.call(elie,1,2,3,4) // Elie just calculated 10
-    addNumbers.apply(elie, [1,2,3,4]) // Elie just calculated 10
+        addNumbers.call(elie,1,2,3,4) // Elie just calculated 10
+        addNumbers.apply(elie, [1,2,3,4]) // Elie just calculated 10
 
-    // when a function does not accept an array, apply will spread out values in an array for us
-    var nums = [5,7,1,4,2];
-    Math.max(nums); // NaN
-    Math.max.apply(this, nums); // 7
+        // when a function does not accept an array, apply will spread out values in an array for us
+        var nums = [5,7,1,4,2];
+        Math.max(nums); // NaN
+        Math.max.apply(this, nums); // 7
 
-// Bind
-// The parameters work like call, but bind returns a function with the context of 'this' bound already!
+    // Bind
+    // The parameters work like call, but bind returns a function with the context of 'this' bound already!
 
-function addNumbers(a,b,c,d){
-  return this.firstName + " just calculated " + (a+b+c+d);
+        function addNumbers(a,b,c,d){
+          return this.firstName + " just calculated " + (a+b+c+d);
+        }
+
+        var elie = {
+          firstName: "Elie"
+        }
+
+        var elieCalc = addNumbers.bind(elie, 1,2,3,4); // function(){} ...
+        elieCalc(); // Elie just calculated 10
+        //  With bind - we do not need to know all the arguments up front!
+        var elieCalc = addNumbers.bind(elie, 1, 2); // function(){} ...
+        elieCalc(3,4); // Elie just calculated 10
+
+        // notice setTimeout is a method on the window object
+        // Very commonly we lose the context of 'this', but in functions that we do not want to excute right away
+        var colt = {
+          firstName: "Colt",
+          sayHi: function() {
+            setTimeout(function(){
+              console.log("Hi " + this.firstName);
+            }, 1000);
+          }
+        }
+        // > colt.sayHi(); // < Hi undefined
+
+        // use bind to set the correct context of 'this'
+        var colt = {
+          firstName: "Colt",
+          sayHi: function() {
+            setTimeout(function(){
+              console.log("Hi " + this.firstName);
+            }.bind(this), 1000);
+          }
+        }
+        // > colt.sayHi(); // < Hi Colt
+/*-----------------------------------------------------*/
+
+/*OOP*/
+// Notice JS doesn't has built-in support for classes
+
+/*The 'new' keyword*/
+function House(bedrooms, bathrooms, numSqft){
+  this.bedrooms = bedrooms;
+  this.bathrooms = bathrooms;
+  this.numSqft = numSqft;
 }
 
-var elie = {
-  firstName: "Elie"
-}
+var firstHouse = House(2,2,1000);
+// > firstHouse // < undefined
+var firstHouse = new House(2,2,1000);
+// > firstHouse.bedrooms; // < 2
+// > firstHouse.bathrooms; // < 2
+// > firstHouse.numSqft; // < 1000
 
-var elieCalc = addNumbers.bind(elie, 1,2,3,4); // function(){} ...
-elieCalc(); // Elie just calculated 10
-//  With bind - we do not need to know all the arguments up front!
-var elieCalc = addNumbers.bind(elie, 1, 2); // function(){} ...
-elieCalc(3,4); // Elie just calculated 10
+// with the new keyword, the constructor function return a object
+// It first create an empty object
+// It then sets the keyword 'this' to be that empty object
+// It add the line 'return this' to the end of the function, which follows it
+// It adds a property onto the empty object called "__proto__", which links the peototype property in the constructor function to the empty object
 
-// notice setTimeout is a method on the window object
-// Very commonly we lose the context of 'this', but in functions that we do not want to excute right away
-var colt = {
-  firstName: "Colt",
-  sayHi: function() {
-    setTimeout(function(){
-      console.log("Hi " + this.firstName);
-    }, 1000);
+// example
+function Dog(name, age){
+  this.name = name;
+  this.age = age;
+  this.back = function() {
+    console.log(this.name + " just barked!")
   }
 }
-// > colt.sayHi(); // < Hi undefined
+var rusty = new Dog('Rusty', 3);
+rusty.bark() // Rusty just barked!
 
-// use bind to set the correct context of 'this'
-var colt = {
-  firstName: "Colt",
-  sayHi: function() {
-    setTimeout(function(){
-      console.log("Hi " + this.firstName);
-    }.bind(this), 1000);
-  }
+
+//refactor the code using call/apply
+function Car(make, model, year){
+  this.make = make;
+  this.model = model;
+  this.year = year;
+  this.numWheels = 4;
 }
-// > colt.sayHi(); // < Hi Colt
 
+function Motorcycle(make, model, year){
+  //using call
+  Car.call(this, make, model, year)
+  this.numWheels = 2;
+}
+
+function Motorcycle(){ // don't need to even pass in parameters!
+  // even better using apply with arguments
+  Car.apply(this, arguments);
+  this.numWheels = 2;
+}
