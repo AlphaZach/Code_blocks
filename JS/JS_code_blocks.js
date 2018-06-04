@@ -873,3 +873,4 @@ function Motorcycle(){ // don't need to even pass in parameters!
   Car.apply(this, arguments);
   this.numWheels = 2;
 }
+
