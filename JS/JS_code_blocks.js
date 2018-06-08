@@ -822,55 +822,425 @@ function classRoom(){
 /*OOP*/
 // Notice JS doesn't has built-in support for classes
 
-/*The 'new' keyword*/
-function House(bedrooms, bathrooms, numSqft){
-  this.bedrooms = bedrooms;
-  this.bathrooms = bathrooms;
-  this.numSqft = numSqft;
+  /*The 'new' keyword*/
+    function House(bedrooms, bathrooms, numSqft){
+      this.bedrooms = bedrooms;
+      this.bathrooms = bathrooms;
+      this.numSqft = numSqft;
+    }
+
+    var firstHouse = House(2,2,1000);
+    // > firstHouse // < undefined
+    var firstHouse = new House(2,2,1000);
+    // > firstHouse.bedrooms; // < 2
+    // > firstHouse.bathrooms; // < 2
+    // > firstHouse.numSqft; // < 1000
+
+    // with the new keyword, the constructor function return a object
+    // It first create an empty object
+    // It then sets the keyword 'this' to be that empty object
+    // It add the line 'return this' to the end of the function, which follows it
+    // It adds a property onto the empty object called "__proto__", which links the peototype property in the constructor function to the empty object
+
+    // example
+    function Dog(name, age){
+      this.name = name;
+      this.age = age;
+      this.back = function() {
+        console.log(this.name + " just barked!")
+      }
+    }
+    var rusty = new Dog('Rusty', 3);
+    rusty.bark() // Rusty just barked!
+
+
+    //refactor the code using call/apply
+    function Car(make, model, year){
+      this.make = make;
+      this.model = model;
+      this.year = year;
+      this.numWheels = 4;
+    }
+
+    function Motorcycle(make, model, year){
+      //using call
+      Car.call(this, make, model, year)
+      this.numWheels = 2;
+    }
+
+    function Motorcycle(){ // don't need to even pass in parameters!
+      // even better using apply with arguments
+      Car.apply(this, arguments);
+      this.numWheels = 2;
+    }
+
+
+  /*Prototypes*/
+    // Every constructor function has a property on it called "prototype", which is an object
+    // The prototype object has a property on it called "constructor", which points back to the constructor function
+    // Anytime an object is created using the 'new' keyword, aproperty called "__proto__" gets created, linking the object and the prototype property of the constructor function
+
+    // this is the constructor function
+    function Person(name){
+      this.name = name;
+    }
+    // there are objects created from the Person constructor
+    var elie = new Person("Elie");
+    var colt = new Person("Colt");
+    // since we used the new keyword, we have established
+    // a link between the object and the prototype property
+    // We can access that using __proto__
+    elie.__proto__ === Person.prototype; // true
+    colt.__proto__ === Person.prototype; // true
+    // the Person.prototype object also has a property
+    // called constructor which points back to the function
+    Person.prototype.constructor === Person; // true
+
+    // By the Prototype chain, we can add method to object
+    function Vehicle(make, model, year){
+      this.make = make;
+      this.model = model;
+      this.year = year;
+      this.isRunning = false;
+    }
+
+    Vehicle.prototype.turnOn = function(){
+      this.isRunning = true;
+    }
+
+    Vehicle.prototype.turnOff = function(){
+      this.isRunning = false;
+    }
+
+    Vehicle.prototype.honk = function(){
+      if(this.isRunning){
+        return "beep!";
+      }
+    }
+
+  /*Inheritance*/
+    function Person(firstName, lastName){
+      this.firstName = firstName;
+      this.lastName = lastName;
+    }
+
+    Person.prototype.sayHi = function(){
+      return "Hello " + this.firstName + " " + this.lastName;
+    }
+
+    // create student that inherites Person's property
+    function Student(firstName, lastName){
+      return Person.apply(this, arguments);
+    }
+    // to inherite prototype, we can't use Student.prototype = Person.prototype;
+    // Since it will just create a reference, if we change the Student.prototype, it will affect the Parent.prototype
+
+    // we should use Object.create
+    // The Object.create() method creates a new object, using an existing object to provide the newly created object's __proto__ .
+    Student.prototype = Object.create(Person.prototype);
+    // Why don't use 'new'? 
+    // Student.prototype = new Person; does almost the same thing, but add additional unnecessary properties on the prototype object(since it is creating an object with undefined proerties just for the prototype).
+
+    // Last, we need to redefined the constructor property
+    Student.prototype.constructor = Student;
+/*-----------------------------------------------------------------------------------------------------*/
+
+/************************************************************************************/
+/*ES2015*/
+
+/* keyword 'const' */
+//with const, will not able to change the value of primitives
+const instructor = "Tim";
+// > instructor = "Elie"; // < TypeError
+// > const instructor = "Elie"; // < SyntaxError
+
+// however, we still able to change the value of an array
+const numbers = [1,2,3,4];
+numbers.push(10); // < 5
+/*---------------------------------*/
+
+
+/* keyword 'let' */
+//let allows you to declare variables that are limited in scope to the block, statement, or expression on which it is used. This is unlike the var keyword, which defines a variable globally, or locally to an entire function regardless of block scope.
+
+function letTest() {
+  let x = 1;
+  if (true) {
+    let x = 2;  // different variable
+    console.log(x);  // 2
+  }
+  console.log(x);  // 1
 }
 
-var firstHouse = House(2,2,1000);
-// > firstHouse // < undefined
-var firstHouse = new House(2,2,1000);
-// > firstHouse.bedrooms; // < 2
-// > firstHouse.bathrooms; // < 2
-// > firstHouse.numSqft; // < 1000
+// let, unlike var, does not create a property on the global object. For example:
+var x = 'global';
+let y = 'global';
+console.log(this.x); // "global"
+console.log(this.y); // undefined
 
-// with the new keyword, the constructor function return a object
-// It first create an empty object
-// It then sets the keyword 'this' to be that empty object
-// It add the line 'return this' to the end of the function, which follows it
-// It adds a property onto the empty object called "__proto__", which links the peototype property in the constructor function to the empty object
+// A case that using let
+for(var i = 0; i < 5; i++ ){
+  setTimeout(function(){
+    console.log(i);
+  }, 1000)
+}
 
-// example
-function Dog(name, age){
-  this.name = name;
-  this.age = age;
-  this.back = function() {
-    console.log(this.name + " just barked!")
+// 5 (five times)
+// since the for loop finished before the setTimeout run
+// one solution to fix that is running another function inside of the loop, and invoke it immediatelly
+for(var i = 0; i < 5; i++){
+  (function(j){
+    setTimeout(function(){
+      console.log(j)
+    },1000);
+  })(i)
+}
+// 0
+// 1
+// 2
+// 3
+// 4
+
+// We can use 'let' make thing much easier
+// it will create new variable i for each iteration in the loop
+for(let i = 0; i < 5; i++){
+  setTimeout(function(){
+    console.log(i);
+  },1000);
+}
+// 0
+// 1
+// 2
+// 3
+// 4
+/*-------------------------------------------------------------*/
+
+/* Arrow Function */
+// ES5
+var add = function(a,b){
+  return a + b;
+}
+// replace the keyword 'function' with=>
+// ES2015
+var add = (a,b) => {
+  return a+b;
+}
+// One-line Arrow Functions
+// You can put arrow functions on one line.
+// But you must omit the return keyword as well as curly braces
+var add = (a,b) => a+b;
+
+// Refactoring with arrow functions
+// ES5
+[1,2,3].map(function(value){
+  return value * 2;
+}); // [2,4,6]
+
+// ES2015
+[1,2,3].map(value => value * 2); // [2,4,6];
+
+// another example
+function doubleAndFilter(arr){
+  return arr.map(function(value){
+    return value*2;
+  }).filter(function(value){
+    return value % 3 === 0;
+  })
+};
+doubleAndFilter([5,10,15,20]); // [30]
+// can be refactoried to
+var doubleAndFilter = arr => arr.map(val => val * 2).filter(num => num % 3 === 0);
+doubleAndFilter([5,10,15,20]); // [30]
+
+// Warning! 
+// ! Arrow function are not exactly the same as regular functions!
+// Arrow function do not get their own 'this' keyword
+// inside of an arrow function, the keyword this has its original meaning from the enclosing context.
+
+var instructor = {
+  firstName: "Elie",
+  sayHi: function() {
+    setTimeout(() => {
+      console.log("Hello " + this.firstName); // the this here refer to instructor object scope
+    }, 1000);
   }
 }
-var rusty = new Dog('Rusty', 3);
-rusty.bark() // Rusty just barked!
 
+instructor.sayHi(); // "Hello Elie"
+// however, we can't sue arrow function for sayHi function, because by do so, the keyword this will refer to global object
 
-//refactor the code using call/apply
-function Car(make, model, year){
-  this.make = make;
-  this.model = model;
-  this.year = year;
-  this.numWheels = 4;
+// ! Arrow function do not get their own keyword arguments
+var add = (a,b) => {
+  return arguments;
 }
 
-function Motorcycle(make, model, year){
-  //using call
-  Car.call(this, make, model, year)
-  this.numWheels = 2;
+add(2,4); // ReferenceError: arguments is not defined
+
+function outer(){
+  return innerFunction = () => {
+    return arguments;
+  }
+}
+outer(1)(2); // only prints out [1]
+/*----------------------------------------------------------*/
+
+
+/* Default Parameters */
+function add(a=10, b=20){
+  return a+b;
 }
 
-function Motorcycle(){ // don't need to even pass in parameters!
-  // even better using apply with arguments
-  Car.apply(this, arguments);
-  this.numWheels = 2;
+add(); // 30
+add(20); // 40
+/*------------------------------------------------*/
+
+/* For...of */
+var arr = [1,2,3,4,5];
+for (let val of arr){
+  console.log(val);
 }
+
+// 1
+// 2
+// 3
+// 4
+// 5
+
+// remenber it can't access an index
+// can only be used on data structures with a Symbol.iterator method implemented (no object)
+/* --------------------------------------------------------------*/
+
+/* Rest */
+
+function printRest(a,b,...c){
+  console.log(a);
+  console.log(b);
+  console.log(c);
+}
+
+printRest(1,2,3,4,5);
+// 1
+// 2
+// [3,4,5]
+
+// we can use the rest operator to convert the arguments into array
+// ES5 :
+function sumArguments(){
+  var argumentsArray = [].slice.call(arguments);
+  return argumentsArray.reduce(function(accumulator,nextValue){
+    return accumulator + nextValue;
+  });
+}
+
+// ES2015
+var sumArguments = (...args) => args.reduce((acc, next) => acc + next);
+/*--------------------------------------------------------------------*/
+
+/* Spread */
+// Used on arrays to spread each value out (as a comma separated value)
+// Useful when you have an array, but what you are working with expects comma separated values
+
+var arr1 = [1,2,3];
+var arr2 = [4,5,6];
+var arr3 = [7,8,9];
+// ES5
+var combined = arr1.concat(arr2).concat(arr3);
+// ES2015
+var combined = [...arr1, ...arr2, arr3];
+
+
+// Spread instead of apply
+var arr = [3,2,4,1,5];
+Math.max(arr); // NaN
+// ES5
+Math.max.apply(this, arr); // 5
+// ES2015
+Math.max(...arr); // 5
+/*---------------------------------------------------------------------------*/
+
+/* Object Shorthand Notation */
+var firstName = "Elie";
+var lastName = "Schoppik";
+// ES5
+var instructor = {
+  firstName: firstName;
+  lastName: lastName;
+}
+// in ES2015 if the key and value hve the same name we don't have to repeat the declaration
+// ES2015
+var instructor = {
+  firstName,
+  lastName
+}
+
+// succinct object method
+// ES5
+var instructor = {
+  sayHello: function(){
+    return "Hello!";
+  }
+}
+// ES2015 - Do not use arrow functions here!
+var Instructor = {
+  sayHello(){
+    return "Hello!";
+  }
+}
+
+// Computed Property Names
+// ES5
+var firstName = "Elie";
+var instructor = {};
+instructor[firstName] = "That's me!";
+
+instructor.Elie; // "That's me!"
+// ES2015, we can assign a value using bracket notation while defining our object
+var firstName = "Elie";
+var instructor = {
+  [firstName]: "That's me!"
+}
+
+instructor.Elie; // "That's me!"
+/*------------------------------------------------------------------*/
+
+/* Destructuring */
+// Extracting values from data stored in objects and arrays
+var instructor = {
+  firstName: "Elie",
+  lastName: "Schoppik"
+}
+
+var {firstName, lastName} = instructor;
+
+firstName; // "Elie"
+lastName; // "Schoppik"
+// or make different variable name
+var {firstName:first, lastName:last} = instructor;
+
+first; // "Elie"
+last; // "Schoppik"
+
+// Default Values with an object
+// ES5
+function createInstructor(options){
+  var options = options || {};
+  var name = options.name || {first: "Matt", last:"Lane"};
+  var inHilarious = options.isHilarious || false;
+  return [name.first, name.last, isHilarious];
+}
+
+createInstructor(); // ["Matt", "Lane", false]
+createInstructor({isHilarious:true}); // ["Matt", "Lane", true]
+createInstructor({name: {first: "Tim", last: "Garcia"}}); // ["Tim", "Carcua", false]
+
+// ES2015 Destructuring
+function createInstructor({name = {first:"Matt", last:"Lane"}, isHilarious=false} = {}){
+  return [name.first, name.last, isHilarious];
+}
+// WE're passing in a destructured object as a default parameter!
+// We assign as a default value an empty object so ES2015 knows we are destructuring
+// if nothing is passed in, we default to the destructured object as the parameter.
+
+
+
 
