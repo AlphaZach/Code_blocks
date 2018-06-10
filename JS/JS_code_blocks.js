@@ -1242,5 +1242,52 @@ function createInstructor({name = {first:"Matt", last:"Lane"}, isHilarious=false
 // if nothing is passed in, we default to the destructured object as the parameter.
 
 
+var instructor = {
+  name: "Elie",
+  favColor: "Purple"
+};
+
+// Object field as parameters ES5
+function displayInfo(obj){
+  return [obj.name, obj.favColor];
+}
+
+// ES2015
+function displayInfo({name, favColor}){
+  return [name, favColor];
+}
+
+displayInfo(instructor); // ["Elie", "Purple"]
+/*-------------------------------------------------------------*/
+
+/*Array Destructuring*/
+var arr = [1,2,3];
+// ES5
+var a = arr[0]
+var b = arr[1]
+var c = arr[2]
+// ES2015
+var [a,b,c] = arr;
+
+a; // 1
+b; // 2
+c; // 3
+
+// Swapping values
+// ES5
+function swap(a,b){
+  var temp = a;
+  a = b;
+  b = temp;
+  return [a,b];
+}
+
+swap(10, 5); // [5,10]
+// ES2015
+function swap(a,b){
+  return [a,b] = [b,a];
+}
+
+swap(10,5); // [5,10]
 
 
