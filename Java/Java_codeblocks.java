@@ -340,12 +340,14 @@ public static void main(String[] args) {
   //the comparision above can be replaced by
   org.junit.Assert.assertArrayEquals(expected, input);
 
+
 /*Selection sort test*/
 public class Sort{
 
-  public static int findSmallest(String[] x) {
-      int smallestIndex = 0;
-      for (int i = 0; i < x.length; i += 1) {
+  /* find the smallest */
+  public static int findSmallest(String[] x, int start) {
+      int smallestIndex = start;
+      for (int i = start; i < x.length; i += 1) {
           int cmp = x[i].compareTo(x[smallestIndex]);
           if (cmp < 0) {
               smallestIndex = i;
@@ -353,11 +355,22 @@ public class Sort{
       }
       return smallestIndex;
   }
-      
+  
+  /*sawp item a with b*/    
   public static void swap(String[] x, int a, int b) {
       String temp = x[a];
       x[a] = x[b];
       x[b] = temp;
+  }
+
+  /*Sorts x starting at position start.*/
+  private static void sort(String[] x, int start){
+    if (start == x.length){
+      return;
+    }
+    int smallestIndex = findSmallest(x, start);
+    swap(x, start, smallestIndex);
+    sort(x, start+1);
   }
 
   //Sorts strings destructively
@@ -365,8 +378,7 @@ public class Sort{
      // find the smallest item
      // move it to the front
      // selection sort the rest (using recursion?)
-     int smallestIndex = findSmallest(x);
-     swap(x, 0, smallestIndex);
+     sort(x, 0);
   }  
 }
 
@@ -376,13 +388,13 @@ public class TestSort{
       String[] input = {"i", "have", "an", "egg"};
       int expected = 2;
 
-      int actual = Sort.findSmallest(input);
+      int actual = Sort.findSmallest(input, 0);
       org.junit.Assert.assertEquals(expected, actual);        
 
       String[] input2 = {"there", "are", "many", "pigs"};
-      int expected2 = 1;
+      int expected2 = 2;
 
-      int actual2 = Sort.findSmallest(input);
+      int actual2 = Sort.findSmallest(input2, 2);
       org.junit.Assert.assertEquals(expected2, actual2);
   }
   //Test the Sort.swap method
@@ -395,8 +407,8 @@ public class TestSort{
       Sort.swap(input, a, b);
       org.junit.Assert.assertArrayEquals(expected, input);
   }
-
-
-
 }
+/*---------------------------------------------------------*/
+
+
 
