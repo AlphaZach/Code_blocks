@@ -1289,5 +1289,108 @@ function swap(a,b){
 }
 
 swap(10,5); // [5,10]
+/*-------------------------------------------------*/
+
+/* ES2015 Object Oriented */
+/* Class */
+
+// A new reserved keyword provided by ES2015
+// The class keyword creates a constant - can not be redeclared
+// The class keyword is an abstraction of constructor functions and prototypes. JavaScript does not have built in support for object oriented programming
+// The class keyword does not hoist
+// Still use `new` keyword to create objects
+
+class Student {
+  constructor(firstName, lastName){
+    this.firstName = firstName;
+    this.lastName = lastName;
+  }
+  // in ES2015 we place our prototype methods inside of the class
+  sayHello(){
+    return `Hello ${this.firstName} ${this.lastName}`;
+  }
+  // we can directly add Class methods and properties, they are static 
+  static isStudent(obj){
+    return obj.constructor === Student;
+  }
+}
+
+var elie = new Student('Elie', 'Schoppik'); // same as ES5
+elie.sayHello(); // "Hello Elie Schoppik"
+Student.isStudent(elie); // true
+Student.isStudent([]); // false
+
+/* Inheritance */
+class Person {
+  constructor(firstName,lastName){
+    this.firstName = firstName;
+    this.lastName = lastName;
+  }
+  sayHello(){
+    return `Hello ${this.firstName} ${this.lastName}`;
+  }
+}
+
+// The super keyword is used to access and call functions on an object's parent.
+// When used in a constructor, the super keyword appears alone and must be used before the this keyword is used. 
+class Student extends Person {
+  constructor(firstName, lastName){
+    // you must use super here
+    super(firstName, lastName); 
+  }
+}
+/*-----------------------------------------------------*/
+
+/* Maps */
+// Similar to objects, except the keys can be ANY data type
+
+var firstMap = new Map;
+
+firstMap.set(1, 'Elie');
+firstMap.set(false, 'a boolean');
+firstMap.set('nice', 'a string');
+firstMap.delete('nice'); // true
+firstMap.size // 2
+
+var arrayKey = [];
+firstMap.set(arrayKey, [1,2,3,4,5]);
+var objectKey = {};
+firstMap.set(objectKey, {a:1});
+
+// Extracting Values
+firstMap.get(1); // 'Elie'
+firstMap.get(false); // 'a boolean'
+firstMap.get(arrayKey); // [1,2,3,4,5]
+firstMap.get(objectKey); // {a:1}
+
+// can iterate over the map
+firstMap.forEach(v => console.log(v));
+// ELie
+// a boolean
+// [1,2,3,4,5]
+// {a:1}
+
+/* WeakMap */
+// Similar to a map, but all keys MUST be objects
+/*------------------------------------------------------*/
+
+/* Set */
+// All values in a set are unique
+// any type of value can exist in a set
+
+// use, when you wanna avoid adding duplicated value
+var s = new Set;
+// can also be created from an array
+var s2 = new Set([3,1,4,1,2,1,5]); // {3,1,4,2,5}
+s.add(10); // {10}
+s.add(20); // {20, 10}
+s.add(10); // {20, 10}
+
+s.size; // 2
+
+s.has(10); // true
+s.delete(20); // true
+s.size; // 1
+/*-------------------------------------------------------*/
 
 
