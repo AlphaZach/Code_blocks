@@ -1393,4 +1393,260 @@ s.delete(20); // true
 s.size; // 1
 /*-------------------------------------------------------*/
 
+/* Promises.all */
+// Accepts an array of promises and resolves all of them or
+// rejects once a single one of the promises has been first rejected(fail fast)
+
+// If all of the passed-in promises fulfill, Promise.all is fulfilled with an array
+// of the values from the passed-in promises, in the same order as the promise passed in.
+
+// the promises don't resolve sequentially, but Promise.all waits for them
+
+function getMovie(title){
+  return $.getJSON(`https://omdbapi.com?=${title}&apikey=thewdb`);
+}
+
+var titanicPromise = getMovie('titanic');
+var shrekPromise = getMovie('shrek');
+var braveheartPromise = getMovie('braveheart');
+// We can recolve all of the promise using Promise.all
+Promise.all([titanicPromise, shrekPromise, braveheartPromise]).then(function(movies){
+  return movies.forEach(function(value){
+    console.log(value.year);
+  });
+});
+
+// 1997
+// 2001
+// 1995
+
+// example, a function accepts some usernames and return the one with most followers on Github
+function getMostFollowers(...usernames){
+  let baseUrl = "https://api.github.com/users/"
+  let urls = usernames.map(username => $.getJSON(baseUrl + username));
+  return Promise.all(urls).then(function(data){
+    // use sort() to sort the data
+    let max = data.sort((a,b) => a.followers < b.followers)[0];
+    return `${max.name} has the most followers with ${max.followers}`
+  })
+}
+/*---------------------------------------------------------------------------*/
+
+/* Generator */
+
+// A special kind of function which can pause execution and resume at any time
+// Created using *
+// When invoked, a generator object is returned to us with the keys of value and done
+// Value is what is returned from the paused function using the yield keyword
+// Done is a boolean which returns true when the function has completed
+
+function* pauseAndReturnValues(num){
+  for(let i = 0; i < num; i++){
+    yield i;
+  }
+}
+
+var gen = pauseAndReturnValues(3);
+gen.next(); // {value: 0, done: false}
+gen.next(); // {value: 1, done: false}
+gen.next(); // {value: 2, done: false}
+gen.next(); // {value: undefined, done: ture}
+
+// Can place multiple yield keywords
+function* printValue(){
+  yield "First";
+  yield "Second";
+  yield "Third";
+}
+
+var g = printValue()；
+g.next().value; // "First"
+g.next().value; // "Second"
+g.next().value; // "Third"
+
+// Iterating; since generators implement a Symbol.iterator property we can use a for..of loop!
+for (val of pauseAndReturnValues(3)){
+  console.log(val);
+}
+
+// 0
+// 1
+// 2
+/*--------------------------------------------------------------*/
+
+/* Object.assign */
+// can make a copy of an object without reference
+var o = {name: "Elie"};
+var o2 = Object.assign({},o);
+
+o2.name = "Tim";
+o.name; // "Elie"
+
+// !! Not a deep clone
+// If we have objects inside of the object we are copying - those still have a reference!
+var o = {instructors: ["Elie", "Tim"]};
+var o2 = Object.assign({},o);
+
+o2.instructors.push("Colt");
+o.instructors; // ["Elie", "Tim", "Colt"];
+/*---------------------------------------------------*/
+
+/* Array.from */
+// Convert other data types into arrays
+
+var divs = document.getElementsByTagName("div"); // returns an array-like-object
+// ES5
+var converted = [].slice.call(divs) // convert it into an array
+// ES2015
+var converted = Array.from(divs);
+
+// COnvert different types of Objects into arrays
+var firstSet = new Set([1,2,3,4,3,2,1]); // {1,2,3,4}
+var arrayFromSet = Array.from(firstSet); // [1,2,3,4]
+/*----------------------------------------------------------*/
+
+/* find */
+
+// invoked on arrays
+// Accepts a callback with value, index and array(just like forEach, map, filter, etc.)
+// Returns the value found or undefined if not found
+
+var instructors = [{name: "Elie"}, {name: "Matt"}, {name: "Tim"}, {name: "Colt"}];
+
+instructors.find(function(val){
+  return val.name === "Tim";
+}); // {name: "Time"}
+
+/*findIndex*/
+// return an index or -1 if the value is not found
+instructors.findIndex(function(val){
+  return val.name === "Tim";
+}); // 2
+
+/*includes*/
+// returns a boolean if a value is in a string
+// easier than using indexOf
+
+// ES5
+"awesome".indexOf("some") > -1 // true
+// ES2015
+"awesome".includes("some"); // true
+
+/*Number.isFinite*/
+// A handy way for handling NaN being a typeof number
+
+// ES5
+function seeIfNumber(val){
+  if (typeof val === "number" && !isNaN(val)){
+    return "It is a number";
+  }
+}
+
+// ES2015
+function seeIfNumber(val){
+  if(Number.isFinite(val)){
+    return "It is a number";
+  }
+}
+/*-------------------------------------------------------------------*/
+
+/* ES2016 + ES2017 */
+
+// Exponential operator
+2**2 = 4
+
+// padStart
+// The first parameter is the total length of the new string
+// the second parameter is what to pad with from the start
+"awesome".padStart(10); // "   awesome"
+"awesome".padStart(10, '!'); // "!!!awesome"
+
+// padEnd
+"awesome".padEnd(10,'!'); // "awesome!!!"
+
+/* ES2017 Async Function */
+// A special kind of function is created using the word async
+// The purpose of async function is to simplify writing asynchronous code, specially Promise
+async function first(){
+  return "We did it!";
+}
+
+first(); // return a Promise
+first().then(val => console.log(val)); // "We did it!"
+
+/* Await */
+// A reserved keyword that can only be using inside async functions
+// await pauses the execution of the async function and is followed by a Promise.
+// The await keyword waits for the promise to resolve, and then resumes the async function's execution and returns the resolved value.
+// Think of the await keyword like a pause button (similar to yield with generators
+async function getMovieData(){
+    console.log("starting!");
+    var movieData = await $.getJSON('https://omdbapi.com?t=titanic&apikey=thewdb');
+    // this line does NOT run until the promise is resolved!
+    console.log(movieData);
+    console.log("all done!");
+}
+
+getMovieData() 
+// starting
+// {Data}
+// all done!
+
+// Handling errors
+// If a promise is rejected using await, an error will be thrown
+// so we can easily use a try/catch statement to handle errors!
+async function getUser(user){
+  try {
+    var response = await $.getJSON(`https://api.github.com/users/${user}`);
+    console.log(response.name);
+  } catch(e){
+    console.log("User does not exist!");
+  }
+}
+
+// With Http request
+// Start the HTTP requests in parallel and then await their resolved promise
+// Much faster than await the HTTP request one by one
+async function getMovieData(){
+    var titanicPromise = $.getJSON(`https://omdbapi.com?t=titanic&apikey=thewdb`);
+    var shrekPromise = $.getJSON(`https://omdbapi.com?t=shrek&apikey=thewdb`);
+
+    var titanicData = await titanicPromise;
+    var shrekData = await shrekPromise;
+
+    console.log(titanicData);
+    console.log(shrekData);
+}
+
+getMovieData();
+
+// Await with Promise.all
+// Here we are simply waiting for an array of promises to resolve!
+async function getMovieData(first, second){
+    var moviesList = await Promise.all([
+        $.getJSON(`https://omdbapi.com?t=${first}&apikey=thewdb`),
+        $.getJSON(`https://omdbapi.com?t=${second}&apikey=thewdb`) 
+    ]);
+    console.log(moviesList[0].Year);
+    console.log(moviesList[1].Year);
+}
+
+getMovieData('shrek', 'blade'); 
+// 2001
+// 1998
+
+/* Object Rest */
+var instructor = {first:"Elie", last:"Schoppik", job:"Instructor", numSiblings:3};
+var { first, last, ...data } = instructor
+first; // "Elie"
+last; // "Schoppik"
+data; // { job: "Instructor", numSiblings: 3 }
+
+/* Object Spread */
+//Great for creating objects starting with default values and is a more concise alternative to Object.assign
+var defaults = {job: "Instructor", ownsCat:true, ownsDog: true};
+
+var matt = {...defaults, ownsCat: false};
+var colt = {...defaults, ownsDog: false};
+
 
