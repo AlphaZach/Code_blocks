@@ -839,7 +839,7 @@ function classRoom(){
     // with the new keyword, the constructor function return a object
     // It first create an empty object
     // It then sets the keyword 'this' to be that empty object
-    // It add the line 'return this' to the end of the function, which follows it
+    // It add the lne 'return this' to the end of the function, which follows it
     // It adds a property onto the empty object called "__proto__", which links the peototype property in the constructor function to the empty object
 
     // example
@@ -1648,5 +1648,6 @@ var defaults = {job: "Instructor", ownsCat:true, ownsDog: true};
 
 var matt = {...defaults, ownsCat: false};
 var colt = {...defaults, ownsDog: false};
-/*-----------------------------------------------------------*/
+/*-----------------------------------------------------------------*/
+
 
